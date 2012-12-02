@@ -50,6 +50,18 @@
 ;; -----------------------------------------------------------------------------
 ;; Unified Interfaces
 
+(comment
+  (first '(1 2 3))
+
+  (first [1 2 3])
+
+  (first #{1 2 3})
+
+  (first {:foo 'bar})
+
+  (first "foo")
+  )
+
 ;; -----------------------------------------------------------------------------
 ;; Persistent Data Structures
 
@@ -70,6 +82,28 @@
   (set! (.. box -style -height) "100px")
 
   (set! (.. box -className) "spin")
+  (set! (.. box -className) "")
+
+  (extend-type js/HTMLElement
+    IFn
+    (-invoke
+      ([this k]
+         (.getAttribute this k))))
+
+  (map box ["id" "class"])
+
+  (extend-type js/HTMLElement
+    ILookup
+    (-lookup
+      ([this k]
+         (-lookup this k v nil))
+      ([this k not-found]
+         (let [attr (name k)]
+           (if-not (.hasAttribute this attr)
+             not-found
+             (.getAttribute this attr))))))
+  
+  ((juxt :id :class) box)
   )
 
 ;; -----------------------------------------------------------------------------
