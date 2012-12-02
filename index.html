@@ -2,12 +2,16 @@
     <head>
     </head>
     <body>
-        <script type="text/javascript" src="repl.js"></script>
+        <script type="text/javascript" src="demo.js"></script>
         <style>
             #box {
               width: 100px;
               height: 100px;
               background-color: red;
+              -webkit-transition: -webkit-transform 1s ease-in-out;
+            }
+            .spin {
+              -webkit-transform: rotate(360deg);
             }
         </style>
         <div id="box" class="rect"></div>
