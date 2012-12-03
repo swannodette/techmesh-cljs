@@ -15,6 +15,14 @@
 ;; Truth
 
 (comment
+  (if false
+    true
+    false)
+
+  (if true
+    true
+    false)
+
   (if 0
     true
     false)
@@ -22,6 +30,74 @@
   (if ""
     true
     false)
+  )
+
+;; -----------------------------------------------------------------------------
+;; Scope!
+
+(comment
+ (def fns (atom []))
+ 
+ (dotimes [i 5]
+   (swap! fns conj (fn [] i)))
+
+ (map (fn [f] (f)) @fns)
+ )
+
+;; -----------------------------------------------------------------------------
+;; Unified interaction with collections
+
+(comment
+  (first '(1 2 3))
+
+  (first [1 2 3])
+
+  (first #{1 2 3})
+
+  (first {:foo 'bar})
+
+  (first "foo")
+  )
+
+;; -----------------------------------------------------------------------------
+;; Equality!
+
+(comment
+  (cljs.core/= [1 2 3] [1 2 3])
+
+  (cljs.core/= {:foo 'bar} {:foo 'bar})
+
+  (doseq [x [1 2 3]]
+    (println x))
+
+  (doseq [[k v :as kv] {:foo 'bar :baz 'woz}]
+    (println k v kv))
+  )
+
+;; -----------------------------------------------------------------------------
+;; Collections are functions
+
+(comment
+  (def address
+    {:street "101 Bit Ave."
+     :city "Bit City"
+     :zip "10101"})
+  
+  (map address [:city :zip])
+  )
+
+;; -----------------------------------------------------------------------------
+;; Destructuring
+
+(comment
+  (let [[_ x _] ["foo" "bar" "baz"]]
+    x)
+
+  (let [[_ [c] _] ["foo" "bar" "baz"]]
+    c)
+
+  (let [[_ {[c] :bar} _] ["foo" {:bar "woz"} "baz"]]
+    c)
   )
 
 ;; -----------------------------------------------------------------------------
@@ -48,28 +124,35 @@
   )
 
 ;; -----------------------------------------------------------------------------
-;; Unified Interfaces
+;; Rest Arguments
 
 (comment
-  (first '(1 2 3))
+  (defn foz [a & rest]
+    (println a rest))
 
-  (first [1 2 3])
-
-  (first #{1 2 3})
-
-  (first {:foo 'bar})
-
-  (first "foo")
+  (foz 1 2 3 4)
   )
 
 ;; -----------------------------------------------------------------------------
-;; Persistent Data Structures
+;; Persistent data structures
 
 (comment
   (let [v '[foo]
         v' (conj v 'bar)]
     [v v'])
+
+  (let [v {:foo 'bar}
+        v' (conj v [:baz 'woz])]
+    [v v'])
+  
+  (let [v '#{cat}
+        v' (conj v 'bird)]
+    (conj (conj v' 'cat) 'cat))
   )
+
+;; /////////////////////////////////////////////////////////////////////////////
+;; SLIDES
+;; /////////////////////////////////////////////////////////////////////////////
 
 ;; -----------------------------------------------------------------------------
 ;; Interactive Development
@@ -90,6 +173,8 @@
       ([this k]
          (.getAttribute this k))))
 
+  (ifn? box)
+  
   (map box ["id" "class"])
 
   (extend-type js/HTMLElement
@@ -104,6 +189,9 @@
              (.getAttribute this attr))))))
   
   ((juxt :id :class) box)
+
+  (let [{[c] :class} box]
+    c)
   )
 
 ;; -----------------------------------------------------------------------------
@@ -122,6 +210,11 @@
   (red-black [:black [:black [:red 1 2 3] 3 4] 5 6])
 
   (let [n [:black [:red [:red 1 2 3] 3 4] 5 6]]
+    (time
+      (dotimes [_ 500000]
+        (red-black n))))
+
+  (let [n [:black [:black [:red 1 2 3] 3 4] 5 6]]
     (time
       (dotimes [_ 500000]
         (red-black n))))
@@ -157,3 +250,7 @@
     (fresh [x y]
       (conso x y q)))
   )
+
+;; /////////////////////////////////////////////////////////////////////////////
+;; SLIDES
+;; /////////////////////////////////////////////////////////////////////////////
