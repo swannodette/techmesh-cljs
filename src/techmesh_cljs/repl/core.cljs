@@ -18,8 +18,8 @@
   (if false
     true
     false)
-
-  (if true
+  
+  (if nil
     true
     false)
 
@@ -57,21 +57,21 @@
   (first {:foo 'bar})
 
   (first "foo")
-  )
-
-;; -----------------------------------------------------------------------------
-;; Equality!
-
-(comment
-  (cljs.core/= [1 2 3] [1 2 3])
-
-  (cljs.core/= {:foo 'bar} {:foo 'bar})
 
   (doseq [x [1 2 3]]
     (println x))
 
   (doseq [[k v :as kv] {:foo 'bar :baz 'woz}]
     (println k v kv))
+  )
+
+;; -----------------------------------------------------------------------------
+;; Sensible equality!
+
+(comment
+  (cljs.core/= [1 2 3] [1 2 3])
+  
+  (cljs.core/= {:foo 'bar} {:foo 'bar})
   )
 
 ;; -----------------------------------------------------------------------------
@@ -124,37 +124,6 @@
   )
 
 ;; -----------------------------------------------------------------------------
-;; Rest Arguments
-
-(comment
-  (defn foz [a & rest]
-    (println a rest))
-
-  (foz 1 2 3 4)
-  )
-
-;; -----------------------------------------------------------------------------
-;; Persistent data structures
-
-(comment
-  (let [v '[foo]
-        v' (conj v 'bar)]
-    [v v'])
-
-  (let [v {:foo 'bar}
-        v' (conj v [:baz 'woz])]
-    [v v'])
-  
-  (let [v '#{cat}
-        v' (conj v 'bird)]
-    (conj (conj v' 'cat) 'cat))
-  )
-
-;; /////////////////////////////////////////////////////////////////////////////
-;; SLIDES
-;; /////////////////////////////////////////////////////////////////////////////
-
-;; -----------------------------------------------------------------------------
 ;; Interactive Development
 
 (comment
@@ -173,8 +142,6 @@
       ([this k]
          (.getAttribute this k))))
 
-  (ifn? box)
-  
   (map box ["id" "class"])
 
   (extend-type js/HTMLElement
@@ -188,11 +155,16 @@
              not-found
              (.getAttribute this attr))))))
   
-  ((juxt :id :class) box)
+  (let [[id class] ((juxt :id :class) box)]
+    class)
 
   (let [{[c] :class} box]
     c)
   )
+
+;; /////////////////////////////////////////////////////////////////////////////
+;; SLIDES
+;; /////////////////////////////////////////////////////////////////////////////
 
 ;; -----------------------------------------------------------------------------
 ;; Pattern matching
@@ -213,42 +185,6 @@
     (time
       (dotimes [_ 500000]
         (red-black n))))
-
-  (let [n [:black [:black [:red 1 2 3] 3 4] 5 6]]
-    (time
-      (dotimes [_ 500000]
-        (red-black n))))
-  )
-
-;; -----------------------------------------------------------------------------
-;; Logic Programming
-
-(comment
-  (run* [q]
-    (== q true))
-
-  (run* [q]
-    (conde
-      [(== q 'coffee)]
-      [(== q 'tea)]))
-
-  (run 1 [q]
-    (conde
-      [(== q 'coffee)]
-      [(== q 'tea)]))
-
-  (run* [q]
-    (conso 'a '(b c) q))
-
-  (run* [q]
-    (conso 'a q '(a b c)))
-
-  (run* [q]
-    (conso q '(b c) '(a b c)))
-
-  (run* [q]
-    (fresh [x y]
-      (conso x y q)))
   )
 
 ;; /////////////////////////////////////////////////////////////////////////////
